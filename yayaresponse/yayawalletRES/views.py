@@ -14,13 +14,13 @@ def transaction_handler(request):
         try:
             payload = json.loads(request.body.decode('utf-8'))
             print(payload)
-            header = request.META.get('YAYA-SIGNATURE')
+            yayaSignture = request.META.get('YAYA-SIGNATURE')
             print(header)
             signed_payload = payload['id']+str(payload['amount'])+payload['currency']+str(payload['created_at_time'])+str(payload['timestamp'])+payload['cause']+payload['full_name']+payload['account_name']+payload['invoice_url']
 
             signature=hmac.new(bytes('secretkey','utf-8'),bytes(signed_payload,'utf-8'),hashlib.sha256)
             print(signature.hexdigest())
-            if signature:
+            if hmac.compare_digest(signature,yayaSignture):
                 id = payload['id']
                 amount = payload['amount']
                 currency = payload['currency']
